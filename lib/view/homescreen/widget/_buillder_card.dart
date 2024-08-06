@@ -25,7 +25,7 @@ class BuildCard extends StatelessWidget {
           children: [
             Row(
               children: [
-                Text(tittle,style: TextStyle(fontSize: 25),),
+                Text(tittle,style: TextStyle(fontSize: 25,fontWeight: FontWeight.bold),),
                 Spacer(),
                 InkWell(
                   onTap: onEdit,
@@ -41,7 +41,7 @@ class BuildCard extends StatelessWidget {
             SizedBox(
               height: 8,
             ),
-            Text(dec,style: TextStyle(fontSize: 16),),
+            Text(dec,style: TextStyle(fontSize: 16,fontWeight: FontWeight.bold),),
             SizedBox(
               height: 10,
             ),

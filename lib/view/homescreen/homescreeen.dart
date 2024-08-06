@@ -1,6 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_application_4/dummy_Db.dart';
+import 'package:flutter_application_4/utils/app_section.dart';
+import 'package:flutter_application_4/view/detailsscreen/details_screen.dart';
 import 'package:flutter_application_4/view/homescreen/widget/_buillder_card.dart';
+import 'package:hive/hive.dart';
+import 'package:intl/intl.dart';
 
 class Homescreeen extends StatefulWidget {
   const Homescreeen({super.key});
@@ -14,6 +18,16 @@ class _HomescreeenState extends State<Homescreeen> {
   TextEditingController Descriptioncontroller = TextEditingController();
   TextEditingController Datecontroller = TextEditingController();
   int selectedcolorindex = 0;
+  var noteBox = Hive.box(AppSection.NOTEBOX); //step2 reffernce
+
+  List notekeys = [];
+  @override
+  void initState() {
+    notekeys = noteBox.keys.toList();
+    setState(() {});
+    super.initState();
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -41,30 +55,48 @@ class _HomescreeenState extends State<Homescreeen> {
                   padding: EdgeInsets.all(10),
                   physics: ScrollPhysics(),
                   shrinkWrap: true,
-                  itemBuilder: (context, index) => BuildCard(
-                    buildercolour: DummyDb.containercolor[DummyDb.notelist[index]["colorIndex"]],
-                        tittle: DummyDb.notelist[index]["tittle"],
-                        date: DummyDb.notelist[index]["date"],
-                        dec: DummyDb.notelist[index]["dec"],
+                  itemBuilder: (context, index) {
+                    var currentNote = noteBox.get(notekeys[index]);
+                    return InkWell(
+                      onTap: () {
+                        Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                              builder: (context) => DetailsScreen(
+                                  tittle: currentNote["tittle"],
+                                  dec: currentNote["dec"],
+                                  date: currentNote["date"],
+                                  buildercolour: DummyDb.containercolor[
+                                      currentNote["colorIndex"]]),
+                            ));
+                      },
+                      child: BuildCard(
+                        buildercolour:
+                            DummyDb.containercolor[currentNote["colorIndex"]],
+                        tittle: currentNote["tittle"],
+                        date: currentNote["date"],
+                        dec: currentNote["dec"],
                         onDelete: () {
-                          DummyDb.notelist.removeAt(index);
+                          noteBox.delete(notekeys[index]);
+                          notekeys = noteBox.keys.toList();
                           setState(() {});
                         },
                         onEdit: () {
-                          Titlecontroller.text =
-                              DummyDb.notelist[index]["tittle"];
-                          Datecontroller.text = DummyDb.notelist[index]["date"];
-                          Descriptioncontroller.text =
-                              DummyDb.notelist[index]["dec"];
+                          Titlecontroller.text = currentNote["tittle"];
+                          Datecontroller.text = currentNote["date"];
+                          Descriptioncontroller.text = currentNote["dec"];
+                          selectedcolorindex = currentNote["colorIndex"];
 
                           _customBottomsheet(context,
                               isEdit: true, itemindex: index);
                         },
                       ),
+                    );
+                  },
                   separatorBuilder: (context, index) => SizedBox(
                         height: 5,
                       ),
-                  itemCount: DummyDb.notelist.length),
+                  itemCount: notekeys.length),
             ],
           ),
         ),
@@ -114,10 +146,23 @@ class _HomescreeenState extends State<Homescreeen> {
                 height: 20,
               ),
               TextFormField(
+                readOnly: true,
                 controller: Datecontroller,
                 decoration: InputDecoration(
                     filled: true,
                     hintText: "date",
+                    suffixIcon: IconButton(
+                        onPressed: () async {
+                          var selectedDate = await showDatePicker(
+                              context: context,
+                              firstDate: DateTime(2020),
+                              lastDate: DateTime.now());
+                          if (selectedDate != null) {
+                            Datecontroller.text =
+                                DateFormat("dd/MMM/yy").format(selectedDate);
+                          }
+                        },
+                        icon: Icon(Icons.calendar_month_outlined)),
                     fillColor: Colors.grey,
                     border: OutlineInputBorder(
                       borderRadius: BorderRadius.circular(10),
@@ -128,7 +173,7 @@ class _HomescreeenState extends State<Homescreeen> {
               ),
               // buildcolour section
               StatefulBuilder(
-                builder: (context, setState) => Row(   
+                builder: (context, setState) => Row(
                   children: List.generate(
                       DummyDb.containercolor.length,
                       (index) => Expanded(
@@ -162,21 +207,29 @@ class _HomescreeenState extends State<Homescreeen> {
                     child: InkWell(
                       onTap: () {
                         if (isEdit == true) {
-                          DummyDb.notelist[itemindex!] = {
-                            "tittle": Titlecontroller.text,
-                            "dec": Descriptioncontroller.text,
-                            "date": Datecontroller.text,
-                            "colorIndex": selectedcolorindex
-                          };
-                        } else
-                          DummyDb.notelist.add({
+                          noteBox.put(notekeys[itemindex!], {
                             "tittle": Titlecontroller.text,
                             "dec": Descriptioncontroller.text,
                             "date": Datecontroller.text,
                             "colorIndex": selectedcolorindex
                           });
-                        setState(() {});
+                          // DummyDb.notelist[itemindex!] = {
+                          //   "tittle": Titlecontroller.text,
+                          //   "dec": Descriptioncontroller.text,
+                          //   "date": Datecontroller.text,
+                          //   "colorIndex": selectedcolorindex
+                          // };
+                        } else
+                          //step 3 data add
+                          noteBox.add({
+                            "tittle": Titlecontroller.text,
+                            "dec": Descriptioncontroller.text,
+                            "date": Datecontroller.text,
+                            "colorIndex": selectedcolorindex
+                          });
+                        notekeys = noteBox.keys.toList();
                         Navigator.pop(context);
+                        setState(() {});
                       },
                       child: Container(
                         padding: EdgeInsets.symmetric(vertical: 10),
