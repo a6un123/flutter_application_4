@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_application_4/utils/color_Constants.dart';
 import 'package:flutter_application_4/view/homescreen/homescreeen.dart';
 import 'package:lottie/lottie.dart';
 
@@ -21,7 +22,7 @@ class _SplashscreenState extends State<Splashscreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: Colors.black,
+      backgroundColor: ColorConstants.BLACK,
       body: Center(
            child: Lottie.asset("assets/animation/notapp_animation.json")
       ),

@@ -51,7 +51,7 @@ class BuildCard extends StatelessWidget {
                 Text(
                   date,
                   style:
-                      TextStyle(color: Colors.black, fontWeight: FontWeight.w300),
+                      TextStyle( fontWeight: FontWeight.w300),
                 ),
                 SizedBox(
                   width: 10,

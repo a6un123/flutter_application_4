@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_application_4/dummy_Db.dart';
 import 'package:flutter_application_4/utils/app_section.dart';
+import 'package:flutter_application_4/utils/color_Constants.dart';
 import 'package:flutter_application_4/view/detailsscreen/details_screen.dart';
 import 'package:flutter_application_4/view/homescreen/widget/_buillder_card.dart';
 import 'package:hive/hive.dart';
@@ -42,10 +43,10 @@ class _HomescreeenState extends State<Homescreeen> {
         },
         child: Icon(
           Icons.add,
-          color: Colors.black,
+          color: ColorConstants.BLACK,
         ),
       ),
-      backgroundColor: Colors.black,
+      backgroundColor: ColorConstants.BLACK,
       body: SingleChildScrollView(
         child: Padding(
           padding: const EdgeInsets.symmetric(vertical: 30),
@@ -76,11 +77,13 @@ class _HomescreeenState extends State<Homescreeen> {
                         tittle: currentNote["tittle"],
                         date: currentNote["date"],
                         dec: currentNote["dec"],
+                        // for delteting
                         onDelete: () {
                           noteBox.delete(notekeys[index]);
                           notekeys = noteBox.keys.toList();
                           setState(() {});
                         },
+                        // for editing
                         onEdit: () {
                           Titlecontroller.text = currentNote["tittle"];
                           Datecontroller.text = currentNote["date"];
@@ -123,7 +126,7 @@ class _HomescreeenState extends State<Homescreeen> {
                 decoration: InputDecoration(
                     filled: true,
                     hintText: "Tittle",
-                    fillColor: Colors.grey,
+                    fillColor: ColorConstants.GREY,
                     border: OutlineInputBorder(
                       borderRadius: BorderRadius.circular(10),
                     )),
@@ -137,7 +140,7 @@ class _HomescreeenState extends State<Homescreeen> {
                 decoration: InputDecoration(
                     filled: true,
                     hintText: "Description",
-                    fillColor: Colors.grey,
+                    fillColor: ColorConstants.GREY,
                     border: OutlineInputBorder(
                       borderRadius: BorderRadius.circular(10),
                     )),
@@ -163,7 +166,7 @@ class _HomescreeenState extends State<Homescreeen> {
                           }
                         },
                         icon: Icon(Icons.calendar_month_outlined)),
-                    fillColor: Colors.grey,
+                    fillColor: ColorConstants.GREY,
                     border: OutlineInputBorder(
                       borderRadius: BorderRadius.circular(10),
                     )),
@@ -213,12 +216,6 @@ class _HomescreeenState extends State<Homescreeen> {
                             "date": Datecontroller.text,
                             "colorIndex": selectedcolorindex
                           });
-                          // DummyDb.notelist[itemindex!] = {
-                          //   "tittle": Titlecontroller.text,
-                          //   "dec": Descriptioncontroller.text,
-                          //   "date": Datecontroller.text,
-                          //   "colorIndex": selectedcolorindex
-                          // };
                         } else
                           //step 3 data add
                           noteBox.add({
@@ -235,7 +232,7 @@ class _HomescreeenState extends State<Homescreeen> {
                         padding: EdgeInsets.symmetric(vertical: 10),
                         alignment: Alignment.center,
                         decoration: BoxDecoration(
-                            color: Colors.blue,
+                            color: ColorConstants.BLUE,
                             borderRadius: BorderRadius.circular(10)),
                         child: Text(isEdit ? "update" : "Save"),
                       ),
@@ -253,7 +250,7 @@ class _HomescreeenState extends State<Homescreeen> {
                         padding: EdgeInsets.symmetric(vertical: 10),
                         alignment: Alignment.center,
                         decoration: BoxDecoration(
-                            color: Colors.red,
+                            color: ColorConstants.RED,
                             borderRadius: BorderRadius.circular(10)),
                         child: Text("Cancel"),
                       ),
